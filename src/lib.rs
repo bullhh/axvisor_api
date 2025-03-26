@@ -111,6 +111,8 @@ pub use axvisor_api_proc::{api_mod, api_mod_impl};
 pub mod memory {
     pub use memory_addr::{PhysAddr, VirtAddr};
 
+    // API interfaces
+
     /// Allocate a frame.
     extern fn alloc_frame() -> Option<PhysAddr>;
     /// Deallocate a frame.
@@ -119,6 +121,33 @@ pub mod memory {
     extern fn phys_to_virt(addr: PhysAddr) -> VirtAddr;
     /// Convert a virtual address to a physical address.
     extern fn virt_to_phys(addr: VirtAddr) -> PhysAddr;
+
+    // Re-exports
+    // TODO: determine whether it's proper and acceptable to place this definition here in this mod.
+    /// [`AxMmHal`](axaddrspace::AxMmHal) implementation by axvisor_api.
+    #[doc(hidden)]
+    pub struct AxMmHalApiImpl;
+
+    impl axaddrspace::AxMmHal for AxMmHalApiImpl {
+        fn alloc_frame() -> Option<PhysAddr> {
+            alloc_frame()
+        }
+
+        fn dealloc_frame(addr: PhysAddr) {
+            dealloc_frame(addr)
+        }
+
+        fn phys_to_virt(addr: PhysAddr) -> VirtAddr {
+            phys_to_virt(addr)
+        }
+
+        fn virt_to_phys(addr: VirtAddr) -> PhysAddr {
+            virt_to_phys(addr)
+        }
+    }
+
+    /// A physical frame which will be automatically deallocated when dropped.
+    pub type PhysFrame = axaddrspace::PhysFrame<AxMmHalApiImpl>;
 }
 
 #[api_mod]

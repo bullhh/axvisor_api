@@ -58,3 +58,25 @@ pub fn test_memory() {
     assert_eq!(memory::phys_to_virt(pa!(0)), va!(memory_impl::VA_PA_OFFSET));
     assert_eq!(memory::virt_to_phys(va!(memory_impl::VA_PA_OFFSET)), pa!(0));
 }
+
+#[test]
+pub fn test_memory_phys_frame() {
+    use crate::memory;
+    use crate::memory::PhysFrame;
+
+    let _ = memory::alloc_frame();
+    let frame1 = PhysFrame::alloc().unwrap();
+    let frame2 = PhysFrame::alloc().unwrap();
+    let frame3 = PhysFrame::alloc().unwrap();
+
+    assert_eq!(frame1.start_paddr(), pa!(0x1000));
+    assert_eq!(frame2.start_paddr(), pa!(0x2000));
+    assert_eq!(frame3.start_paddr(), pa!(0x3000));
+
+    drop(frame2);
+    assert_eq!(memory_impl::get_returned_sum(), 0x2000);
+    drop(frame3);
+    assert_eq!(memory_impl::get_returned_sum(), 0x5000);
+    drop(frame1);
+    assert_eq!(memory_impl::get_returned_sum(), 0x6000);
+}
