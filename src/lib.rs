@@ -234,9 +234,13 @@ pub mod vmm {
     extern fn notify_vcpu_timer_expired(vm_id: VMId, vcpu_id: VCpuId);
 }
 
+#[api_mod]
 pub mod arch {
+    use super::vmm::InterruptVector;
+
     #[cfg(target_arch = "aarch64")]
-    extern fn hardware_inject_virtual_interrupt(vector: super::vmm::InterruptVector);
+    /// AArch64-specific API. Inject a virtual interrupt to the current virtual CPU using gich.
+    extern fn hardware_inject_virtual_interrupt(vector: InterruptVector);
 }
 
 #[doc(hidden)]
