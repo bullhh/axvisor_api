@@ -234,6 +234,11 @@ pub mod vmm {
     extern fn notify_vcpu_timer_expired(vm_id: VMId, vcpu_id: VCpuId);
 }
 
+pub mod arch {
+    #[cfg(target_arch = "aarch64")]
+    extern fn hardware_inject_virtual_interrupt(vector: super::vmm::InterruptVector);
+}
+
 #[doc(hidden)]
 pub mod __priv {
     pub mod crate_interface {
