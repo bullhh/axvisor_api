@@ -241,6 +241,11 @@ pub mod arch {
     #[cfg(target_arch = "aarch64")]
     /// AArch64-specific API. Inject a virtual interrupt to the current virtual CPU using gich.
     extern fn hardware_inject_virtual_interrupt(vector: InterruptVector);
+
+    #[cfg(target_arch = "aarch64")]
+    extern fn read_vgicd_typer() -> u32;
+    #[cfg(target_arch = "aarch64")]
+    extern fn read_vgicd_iidr() -> u32;
 }
 
 #[doc(hidden)]
