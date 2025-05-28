@@ -116,9 +116,14 @@ pub mod memory {
     /// Allocate a frame.
     extern fn alloc_frame() -> Option<PhysAddr>;
     /// Allocate a number of contiguous frames, with a specified alignment.
-    extern fn alloc_contiguous_frames(num_frames: usize, frame_align_pow2: usize) -> Option<PhysAddr>;
+    extern fn alloc_contiguous_frames(
+        num_frames: usize,
+        frame_align_pow2: usize,
+    ) -> Option<PhysAddr>;
     /// Deallocate a frame.
     extern fn dealloc_frame(addr: PhysAddr);
+    /// Deallocate a number of contiguous frames.
+    extern fn dealloc_contiguous_frames(first_addr: PhysAddr, num_frames: usize);
     /// Convert a physical address to a virtual address.
     extern fn phys_to_virt(addr: PhysAddr) -> VirtAddr;
     /// Convert a virtual address to a physical address.
