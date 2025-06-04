@@ -259,6 +259,11 @@ pub mod arch {
     extern fn read_vgicd_typer() -> u32;
     #[cfg(target_arch = "aarch64")]
     extern fn read_vgicd_iidr() -> u32;
+
+    #[cfg(target_arch = "aarch64")]
+    extern fn get_host_gicd_base() -> crate::memory::PhysAddr;
+    #[cfg(target_arch = "aarch64")]
+    extern fn get_host_gicr_base() -> crate::memory::PhysAddr;
 }
 
 #[doc(hidden)]
