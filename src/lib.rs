@@ -242,6 +242,12 @@ pub mod vmm {
 }
 
 #[api_mod]
+pub mod host {
+    /// Get the total number of cpus in the host system.
+    extern fn get_host_cpu_num() -> usize;
+}
+
+#[api_mod]
 pub mod arch {
     use super::vmm::InterruptVector;
 
