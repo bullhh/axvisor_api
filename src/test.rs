@@ -38,6 +38,11 @@ mod memory_impl {
         RETURNED_SUM.load(core::sync::atomic::Ordering::SeqCst)
     }
 
+    pub fn clear() {
+        ALLOCATED.store(0, core::sync::atomic::Ordering::SeqCst);
+        RETURNED_SUM.store(0, core::sync::atomic::Ordering::SeqCst);
+    }
+
     extern fn phys_to_virt(addr: PhysAddr) -> VirtAddr {
         va!(addr.as_usize() + VA_PA_OFFSET) // Example implementation
     }
@@ -50,6 +55,8 @@ mod memory_impl {
 #[test]
 pub fn test_memory() {
     use crate::memory;
+
+    memory_impl::clear();
 
     let frame1 = memory::alloc_frame();
     let frame2 = memory::alloc_frame();
@@ -74,6 +81,8 @@ pub fn test_memory() {
 pub fn test_memory_phys_frame() {
     use crate::memory;
     use crate::memory::PhysFrame;
+
+    memory_impl::clear();
 
     let _ = memory::alloc_frame();
     let frame1 = PhysFrame::alloc().unwrap();
