@@ -16,7 +16,10 @@ mod memory_impl {
         Some(pa!(value * 0x1000))
     }
 
-    extern fn alloc_contiguous_frames(_num_frames: usize, _frame_align_pow2: usize) -> Option<PhysAddr> {
+    extern fn alloc_contiguous_frames(
+        _num_frames: usize,
+        _frame_align_pow2: usize,
+    ) -> Option<PhysAddr> {
         unimplemented!();
     }
 
