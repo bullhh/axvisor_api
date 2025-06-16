@@ -16,8 +16,16 @@ mod memory_impl {
         Some(pa!(value * 0x1000))
     }
 
+    extern fn alloc_contiguous_frames(_num_frames: usize, _frame_align_pow2: usize) -> Option<PhysAddr> {
+        unimplemented!();
+    }
+
     extern fn dealloc_frame(addr: PhysAddr) {
         RETURNED_SUM.fetch_add(addr.as_usize(), core::sync::atomic::Ordering::SeqCst);
+    }
+
+    extern fn dealloc_contiguous_frames(_first_addr: PhysAddr, _num_frames: usize) {
+        unimplemented!();
     }
 
     /// Get the sum of all returned physical addresses.
