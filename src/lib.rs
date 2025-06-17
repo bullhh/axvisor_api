@@ -256,13 +256,17 @@ pub mod arch {
     extern fn hardware_inject_virtual_interrupt(vector: InterruptVector);
 
     #[cfg(target_arch = "aarch64")]
+    /// AArch64-specific API. Get the TYPER register of the GIC distributor. Used in virtual GIC initialization.
     extern fn read_vgicd_typer() -> u32;
     #[cfg(target_arch = "aarch64")]
+    /// AArch64-specific API. Get the IIDR register of the GIC distributor. Used in virtual GIC initialization.
     extern fn read_vgicd_iidr() -> u32;
 
     #[cfg(target_arch = "aarch64")]
+    /// AArch64-specific API. Get the base address of the GIC distributor in the host system.
     extern fn get_host_gicd_base() -> crate::memory::PhysAddr;
     #[cfg(target_arch = "aarch64")]
+    /// AArch64-specific API. Get the base address of the GIC redistributor in the host system.
     extern fn get_host_gicr_base() -> crate::memory::PhysAddr;
 }
 
