@@ -239,7 +239,6 @@ pub mod vmm {
     ///
     /// TODO: determine whether we can skip this function.
     extern fn notify_vcpu_timer_expired(vm_id: VMId, vcpu_id: VCpuId);
-
 }
 
 #[api_mod]
@@ -247,7 +246,10 @@ pub mod vmm {
 pub mod guest_memory {
     pub use axaddrspace::GuestPhysAddr;
 
-    use crate::{memory::{PhysAddr, VirtAddr}, vmm::{VCpuId, VMId}};
+    use crate::{
+        memory::{PhysAddr, VirtAddr},
+        vmm::{VCpuId, VMId},
+    };
 
     /// Translate a guest physical address to a host physical address.
     extern fn translate_to_phys(
@@ -266,20 +268,12 @@ pub mod guest_memory {
     }
 
     /// Get a const pointer to a value at a guest physical address.
-    pub fn access<T>(
-        vm_id: VMId,
-        vcpu_id: VCpuId,
-        addr: GuestPhysAddr,
-    ) -> Option<*const T> {
+    pub fn access<T>(vm_id: VMId, vcpu_id: VCpuId, addr: GuestPhysAddr) -> Option<*const T> {
         translate_to_virt(vm_id, vcpu_id, addr).map(VirtAddr::as_ptr_of::<T>)
     }
 
     /// Get a mutable pointer to a value at a guest physical address.
-    pub fn access_mut<T>(
-        vm_id: VMId,
-        vcpu_id: VCpuId,
-        addr: GuestPhysAddr,
-    ) -> Option<*mut T> {
+    pub fn access_mut<T>(vm_id: VMId, vcpu_id: VCpuId, addr: GuestPhysAddr) -> Option<*mut T> {
         translate_to_virt(vm_id, vcpu_id, addr).map(VirtAddr::as_mut_ptr_of::<T>)
     }
 }
