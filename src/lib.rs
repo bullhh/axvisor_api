@@ -268,11 +268,17 @@ pub mod guest_memory {
     }
 
     /// Get a const pointer to a value at a guest physical address.
+    /// 
+    /// This function assumes that the `T` at `addr` does not cross page boundaries. Voilating this assumption may lead
+    /// to undefined behavior.
     pub fn access<T>(vm_id: VMId, vcpu_id: VCpuId, addr: GuestPhysAddr) -> Option<*const T> {
         translate_to_virt(vm_id, vcpu_id, addr).map(VirtAddr::as_ptr_of::<T>)
     }
 
     /// Get a mutable pointer to a value at a guest physical address.
+    /// 
+    /// This function assumes that the `T` at `addr` does not cross page boundaries. Voilating this assumption may lead
+    /// to undefined behavior.
     pub fn access_mut<T>(vm_id: VMId, vcpu_id: VCpuId, addr: GuestPhysAddr) -> Option<*mut T> {
         translate_to_virt(vm_id, vcpu_id, addr).map(VirtAddr::as_mut_ptr_of::<T>)
     }
