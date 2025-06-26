@@ -270,6 +270,49 @@ pub mod arch {
     extern fn get_host_gicr_base() -> crate::memory::PhysAddr;
 }
 
+
+#[api_mod]
+/// Guest memory management API.
+pub mod guest_memory {
+    pub use axaddrspace::GuestPhysAddr;
+
+    use crate::{memory::{PhysAddr, VirtAddr}, vmm::{VCpuId, VMId}};
+
+    /// Translate a guest physical address to a host physical address.
+    extern fn translate_to_phys(
+        vm_id: VMId,
+        vcpu_id: VCpuId,
+        addr: GuestPhysAddr,
+    ) -> Option<PhysAddr>;
+
+    /// Translate a guest physical address to a host virtual address.
+    pub fn translate_to_virt(
+        vm_id: VMId,
+        vcpu_id: VCpuId,
+        addr: GuestPhysAddr,
+    ) -> Option<VirtAddr> {
+        translate_to_phys(vm_id, vcpu_id, addr).map(crate::memory::phys_to_virt)
+    }
+
+    /// Get a const pointer to a value at a guest physical address.
+    pub fn access<T>(
+        vm_id: VMId,
+        vcpu_id: VCpuId,
+        addr: GuestPhysAddr,
+    ) -> Option<*const T> {
+        translate_to_virt(vm_id, vcpu_id, addr).map(VirtAddr::as_ptr_of::<T>)
+    }
+
+    /// Get a mutable pointer to a value at a guest physical address.
+    pub fn access_mut<T>(
+        vm_id: VMId,
+        vcpu_id: VCpuId,
+        addr: GuestPhysAddr,
+    ) -> Option<*mut T> {
+        translate_to_virt(vm_id, vcpu_id, addr).map(VirtAddr::as_mut_ptr_of::<T>)
+    }
+}
+
 #[doc(hidden)]
 pub mod __priv {
     pub mod crate_interface {
