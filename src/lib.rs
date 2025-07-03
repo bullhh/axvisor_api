@@ -104,6 +104,8 @@
 
 #![no_std]
 
+use core::sync::atomic::{AtomicUsize, Ordering};
+
 pub use axvisor_api_proc::{api_mod, api_mod_impl};
 
 #[api_mod]
@@ -311,6 +313,52 @@ pub mod guest_memory {
     ) -> Option<*mut T> {
         translate_to_virt(vm_id, vcpu_id, addr).map(VirtAddr::as_mut_ptr_of::<T>)
     }
+}
+
+
+static VIRTIO_MANAGER: VirtioManager = VirtioManager {
+    inner_count: AtomicUsize::new(0),
+    inner_status: AtomicUsize::new(0),
+};
+
+pub struct VirtioManager {
+    inner_count: AtomicUsize,
+    inner_status: AtomicUsize,
+}
+
+impl VirtioManager {
+    fn inner_count(&self) -> usize {
+        self.inner_count.load(Ordering::Relaxed)
+    }
+
+    fn set_current(&self, vm_num: usize) {
+        self.inner_count.store(vm_num, Ordering::Relaxed);
+        self.inner_status.store(1, Ordering::Relaxed);
+    }
+
+    fn inner_status(&self) -> usize {
+        self.inner_status.load(Ordering::Relaxed)
+    }
+
+    fn set_status(&self, status: usize) {
+        self.inner_status.store(status, Ordering::Relaxed);
+    }
+}
+
+pub fn set_current(vm_num: usize) {
+    VIRTIO_MANAGER.set_current(vm_num);
+}
+
+pub fn current_console() -> usize {
+    VIRTIO_MANAGER.inner_count()
+}
+
+pub fn get_status() -> usize {
+    VIRTIO_MANAGER.inner_status()
+}
+
+pub fn set_status(status: usize) {
+    VIRTIO_MANAGER.set_status(status);
 }
 
 #[doc(hidden)]
